@@ -2,7 +2,7 @@
   <div v-if="index <= 3" class="col-sm-3">
     <div class="alert alert-info">
       <h3>{{ resource.name }}</h3>
-      <input class="resource-control" type="text" v-model="localResource.name">
+      <input class="form-control" type="text" v-model="localResource.name">
       <button class="btn btn-primary" @click="updateResource">Update<span v-if="updating">ing...</span></button>
     </div>
   </div>

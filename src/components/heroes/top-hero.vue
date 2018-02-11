@@ -26,10 +26,10 @@ export default {
   methods: {
     updateHero () {
       const index = this.index
-      const updatedHero = _.clone(this.localHero)
+      const updatedInstance = _.clone(this.localHero)
       this.updating = true
 
-      this.$store.dispatch('updateHero', {updatedHero, index})
+      this.$store.dispatch('heroes/updateInstance', {updatedInstance, index})
         .then(() => {
           this.updating = false
         })

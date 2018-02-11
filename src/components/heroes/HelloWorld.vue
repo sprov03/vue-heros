@@ -26,11 +26,14 @@ export default {
   },
   computed: {
     heroes: function () {
-      return this.$store.state.heroes.paginatedHeroes.data.slice(0, 4)
+      return this.$store.state.heroes.collection.slice(0, 4)
     }
   },
   mounted: function () {
-    this.$store.dispatch('getHeroes')
+    Promise.all([
+      this.$store.dispatch('heroes/getCollection'),
+      this.$store.dispatch('todos/getCollection')
+    ])
   },
   methods: {
   }
