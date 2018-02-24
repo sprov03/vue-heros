@@ -1,11 +1,18 @@
 import axios from 'axios'
 import _ from 'lodash'
-import mainStore from './index'
+import mainStore from '../../index'
 
 const defaultActions = {
-  getCollection: function ({state, commit}) {
+  getCollection: function ({state, commit, dispatch}) {
     if (state.collectionLoaded) {
       return Promise.resolve({data: state.collection})
+    }
+
+    let collection = state.getCollectionLocalStorage()
+
+    if (collection) {
+      commit(`setCollection`, collection)
+      return Promise.resolve({data: collection})
     }
 
     return axios.get(`${mainStore.state.baseUrl}/${state.url}`)
@@ -20,12 +27,31 @@ const defaultActions = {
         throw response
       })
   },
-  getInstance: function ({state, commit, dispatch}, id) {
-    let instance
+  resolvePending: async function ({state, dispatch}, id) {
+    let wait = ms => new Promise((resolve, reject) => setTimeout(resolve, ms))
 
-    instance = state.collection.find((instance) => {
+    if (state.pending.includes(parseInt(id))) {
+      console.log('includes', id)
+      return wait(100)
+        .then(() => dispatch('resolvePending', id))
+    }
+
+    return state.collection.find((instance) => {
       return instance.id === parseInt(id)
     })
+  },
+  getInstance: async function ({state, commit, dispatch}, id) {
+    if (!state.collectionLoaded) {
+      let collection = state.getCollectionLocalStorage()
+
+      if (collection) {
+        commit(`setCollection`, collection)
+      }
+    }
+
+    let instance
+
+    instance = await dispatch('resolvePending', id)
 
     if (instance) {
       return Promise.resolve({data: _.clone(instance)})
@@ -78,6 +104,7 @@ const defaultActions = {
     }
   },
   updateInstance: function ({state, commit}, {updatedInstance, index}) {
+    commit('pushPending', updatedInstance.id)
     return axios.put(`${mainStore.state.baseUrl}/${state.url}/${updatedInstance.id}`, updatedInstance)
       .then((response) => {
         let instance = response.data
@@ -87,11 +114,13 @@ const defaultActions = {
         }
 
         commit('updateCollection', {instance, index})
+        commit('removePending', updatedInstance.id)
 
         return response
       })
       .catch((response) => {
         console.log('Error Response: ', response)
+        commit('removePending', updatedInstance.id)
 
         throw response
       })

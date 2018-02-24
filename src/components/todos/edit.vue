@@ -4,7 +4,7 @@
     <div class="clearfix"></div>
     <br>
 
-    <todo-form :todo="localTodo"></todo-form>
+    <todo-form v-if="todo" :todo="todo"></todo-form>
   </div>
 </template>
 
@@ -13,25 +13,23 @@
 import todoForm from './form'
 
 export default {
-  name: 'Todos',
+  name: 'todos',
   components: {
     todoForm
   },
-  data () {
-    return {
-      localTodo: {}
+  computed: {
+    todoId () {
+      return parseInt(this.$router.currentRoute.params.todoId)
+    },
+    todo () {
+      return this.todos.find((todo) => todo.id === this.todoId)
+    },
+    todos () {
+      return this.$store.state.todos.collection
     }
   },
   mounted: function () {
-    this.$store.dispatch('todos/getInstance', this.$router.currentRoute.params.todoId)
-      .then((response) => {
-        this.localTodo = response.data
-      })
+    this.$store.dispatch('todos/getInstance', this.todoId)
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-</style>

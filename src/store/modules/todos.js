@@ -1,20 +1,16 @@
-import baseActions from '../base-actions'
-import baseGetters from '../base-getters'
-import baseMutations from '../base-mutations'
+import store from '../defaults/base/store'
 
 const todos = {
   namespaced: true,
-  state: {
-    collection: [],
-    defaultInstance: {},
-    collectionLoaded: false,
-    url: 'api/todos'
-  },
-  mutations: Object.assign(baseMutations, {}),
+  state: Object.assign(store.state, {
+    url: 'api/todos',
+    localStoragePath: 'todos.collection'
+  }),
+  mutations: Object.assign(store.mutations, {}),
 
-  getters: Object.assign(baseGetters, {}),
+  getters: Object.assign(store.getters, {}),
 
-  actions: Object.assign(baseActions, {}),
+  actions: Object.assign(store.actions, {}),
 
   strict: process.env.NODE_ENV !== 'production'
 }

@@ -44,17 +44,15 @@ export default {
     }
   },
   computed: {
-    todos: function () {
-      return this.$store.state.todos.collection
+    todos () {
+      return this.$store.getters['todos/collection']
     },
     todosLoaded: function () {
-      return this.$store.state.todos.collectionLoaded
+      return this.$store.getters['todos/collectionLoaded']
     }
   },
   mounted: function () {
     this.$store.dispatch('todos/getCollection')
-  },
-  methods: {
   }
 }
 </script>

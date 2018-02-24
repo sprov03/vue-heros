@@ -21,6 +21,16 @@
 </template>
 
 <script>
+// window.onbeforeunload = function (evt) {
+//   var message = 'Are you sure you want to reload?'
+//   if (typeof evt === 'undefined') {
+//     evt = window.event
+//   }
+//   if (evt) {
+//     evt.returnValue = message
+//   }
+//   return message
+// }
 export default {
   name: 'App'
 }

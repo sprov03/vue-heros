@@ -1,45 +1,65 @@
 <template>
   <div>
-    <basic-input-field v-model="todo.label" label="Label" :errors.sync="errors.label"></basic-input-field>
-    <basic-input-field v-model="todo.notes" label="Notes" :errors.sync="errors.notes"></basic-input-field>
+    <basic-input-field
+      v-model="localTodo.label"
+      label="Label"
+      :form-errors.sync="formErrors.label"
+      :out-dated="outDated.label"
+      :disabled="!localTodo"
+      :cleaveOptions="{numeral: true, prefix: '$', numeralDecimalScale: 2}">
+    </basic-input-field>
+
+    <basic-input-field
+      v-model="localTodo.notes"
+      label="Notes"
+      :form-errors.sync="formErrors.notes"
+      :out-dated="outDated.notes"
+      :disabled="!localTodo">
+    </basic-input-field>
+
+    <basic-input-field
+      v-model="localTodo.updated_at"
+      label="Updated At"
+      :form-errors.sync="formErrors.updated_at"
+      :out-dated="outDated.updated_at"
+      :disabled="!localTodo">
+    </basic-input-field>
 
     <div class="checkbox">
       <label>
-        <input type="checkbox" v-model="todo.is_done"> Completed
+        <input type="checkbox" v-model="localTodo.is_done" :disabled="!localTodo"> Completed
       </label>
     </div>
 
     <router-link class="btn btn-warning" to="/todos">Back</router-link>
-    <vue-button class="pull-right" :onClick="save" action="save"></vue-button>
+    <vue-button class="pull-right" :onClick="save" action="save" :formErrors="formErrors"></vue-button>
   </div>
 </template>
 
 <script>
-import basicInputField from '../utilities/forms/basic-input-field'
-import vueButton from '../utilities/buttons/vue-button'
+import formUtilities from '../utilities/forms/mixin'
+import _ from 'lodash'
+
 export default {
   name: 'Todos',
+  mixins: [formUtilities],
   props: ['todo'],
-  components: {
-    basicInputField,
-    vueButton
-  },
   data () {
     return {
-      errors: {}
+      localTodo: {}
     }
+  },
+  mounted () {
+    this.localTodo = _.clone(this.todo)
   },
   methods: {
     save () {
-      return this.$store.dispatch('todos/saveInstance', this.todo)
-        .then(() => {
-          this.$router.push({path: '/todos'})
-        })
-        .catch((error) => {
-          this.errors = error.response.data
+      return this.$store.dispatch('todos/saveInstance', this.handleOutDated(this.localTodo))
+        .then((response) => {
+          this.localTodo = response.data
 
-          throw error
-        })
+          return response
+        }, this.handleFormErrors)
     }
   }
 }

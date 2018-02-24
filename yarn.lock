@@ -1474,6 +1474,14 @@ clean-css@4.1.x:
   dependencies:
     source-map "0.5.x"
 
+cleave.js@^0.7.15:
+  version "0.7.23"
+  resolved "https://registry.yarnpkg.com/cleave.js/-/cleave.js-0.7.23.tgz#55a6906fb60f611276aab9c0def726ee8530c49b"
+
+cleave.js@^1.0.9, cleave.js@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/cleave.js/-/cleave.js-1.1.1.tgz#a575ea4afe963b00589d1bac0909e1a4da98f7c3"
+
 cli-cursor@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/cli-cursor/-/cli-cursor-2.1.0.tgz#b35dac376479facc3e94747d41d0d0f5238ffcb5"
@@ -4790,6 +4798,10 @@ mocha@^3.2.0:
     mkdirp "0.5.1"
     supports-color "3.1.2"
 
+moment@^2.20.1:
+  version "2.20.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.20.1.tgz#d6eb1a46cbcc14a2b2f9434112c1ff8907f313fd"
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -7315,6 +7327,18 @@ void-elements@^2.0.0:
 vue-axios@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/vue-axios/-/vue-axios-2.0.2.tgz#0fe5a69f1edb09a1cd6c4a7f88c74d2fb7fe1778"
+
+vue-cleave-component@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/vue-cleave-component/-/vue-cleave-component-1.0.2.tgz#80b8ad9bafed59324910ec05fc32e14b2814fb6d"
+  dependencies:
+    cleave.js "^1.0.9"
+
+vue-cleave@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/vue-cleave/-/vue-cleave-1.2.2.tgz#857f428c6c92b64ee1c4a82bfba654dea20d71af"
+  dependencies:
+    cleave.js "^0.7.15"
 
 vue-eslint-parser@^2.0.1:
   version "2.0.2"

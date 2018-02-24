@@ -1,32 +1,52 @@
 <template>
-    <div class="form-group" :class="{'is-invalid': hasError}">
-        <label v-if="label" :class="{'text-danger': hasError}">{{label}}</label>
-        <input @input="$emit('input', $event.target.value)" :value="value" :class="{'is-invalid': hasError}" type="type ||'text'" class="form-control" :placeholder="placeholder">
+    <div class="form-group" :class="{'is-invalid': hasError || isOutDated}">
+        <label v-if="label" :class="{'text-danger': hasError, 'text-warning': isOutDated}">{{label}}</label>
+        <cleave v-if="cleaveOptions" v-model="localValue" :options="cleaveOptions" :class="{'is-invalid': hasError, 'text-warning is-invalid': isOutDated}" :type="type ||'text'" class="form-control" :placeholder="placeholder" :disabled="disabled"></cleave>
+        <input v-else @input="$emit('input', $event.target.value)" :value="value" :class="{'is-invalid': hasError, 'text-warning is-invalid': isOutDated}" :type="type ||'text'" class="form-control" :placeholder="placeholder" :disabled="disabled">
         <div v-if="hasError">
-            <div class="text-danger" v-for="(error, index) in errors" :key="index">{{error}}</div>
+            <div class="text-danger" v-for="(error, index) in formErrors" :key="index">{{error}}</div>
+        </div>
+        <div v-if="isOutDated">
+          <div class="text-warning">Existing Value: {{outDated}}</div>
         </div>
         <slot></slot>
     </div>
 </template>
 
 <script>
-import inputField from './input-field.vue'
+import cleave from 'vue-cleave-component'
+let moment = require('moment')
 
 export default {
-  props: ['value', 'label', 'type', 'placeholder', 'errors'],
+  props: ['value', 'label', 'type', 'placeholder', 'formErrors', 'disabled', 'outDated', 'cleaveOptions'],
   components: {
-    inputField
+    cleave
+  },
+  data () {
+    return {
+      localValue: ''
+    }
   },
   watch: {
     'value': {
       handler: function (newValue, oldValue) {
+        if (this.type === 'date') {
+          this.localValue = moment(this.value).format('YYYY-MM-DD')
+          return
+        }
+        this.localValue = this.value
+      }
+    },
+    'localValue': {
+      handler: function (newValue, oldValue) {
+        this.$emit('input', this.localValue)
         if (this.hasError) {
           // Custom Error Validations should go here and if passes then clear the error
-          this.$emit('update:errors', undefined)
+          this.$emit('update:formErrors', undefined)
         }
       }
     },
-    'errors': {
+    'formErrors': {
       handler: function (newValue, oldValue) {
         if (this.hasError) {
           this.$nextTick(() => {
@@ -38,9 +58,11 @@ export default {
   },
   computed: {
     hasError () {
-      return !((this.errors === [] || !this.errors))
+      return !((this.formErrors === [] || !this.formErrors))
+    },
+    isOutDated () {
+      return (this.outDated && this.value !== this.outDated)
     }
   }
-
 }
 </script>

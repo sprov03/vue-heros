@@ -1,6 +1,6 @@
-import baseActions from '../base-actions'
-import baseGetters from '../base-getters'
-import baseMutations from '../base-mutations'
+import baseActions from '../defaults/base/base-actions'
+import baseGetters from '../defaults/base/base-getters'
+import baseMutations from '../defaults/base/base-mutations'
 
 const heroes = {
   namespaced: true,
