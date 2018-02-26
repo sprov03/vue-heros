@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     deleteTodo () {
-      return this.$store.dispatch('todos/deleteInstance', this.todo)
+      return this.$store.dispatch('todos/deleteInstance', this.localTodo)
     },
     updateTodo () {
       this.$store.dispatch('todos/saveInstance', this.localTodo)

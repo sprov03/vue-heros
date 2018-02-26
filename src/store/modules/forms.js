@@ -1,67 +1,17 @@
-import axios from 'axios'
-import Vue from 'vue'
-
-/**
- * Replacements
- * Forms
- * Form
- * forms
- * form
- */
+import store from '../defaults/pagination/store'
+let clone = require('lodash/cloneDeep')
 
 const forms = {
-  state: {
-    paginatedForms: {
-      data: []
-    }
-  },
-  mutations: {
-    setState (state, data) {
-      state.paginatedForms = data
-    },
-    setForms (state, forms) {
-      state.paginatedForms.data = forms
-    },
-    setForm (state, {updatedForm, index}) {
-      Vue.set(state.paginatedForms.data, index, updatedForm)
-    }
-  },
+  namespaced: true,
+  state: Object.assign(clone(store.state), {
+    url: 'api/forms'
+  }),
+  mutations: Object.assign(store.mutations, {}),
 
-  getters: {
-    forms (state) {
-      return state.paginatedForms.data
-    }
-  },
+  getters: Object.assign(store.getters, {}),
 
-  actions: {
-    getForms: function ({state, commit}) {
-      return axios.get(`http://base_52.local/api/forms`)
-        .then((response) => {
-          commit('setState', response.data)
+  actions: Object.assign(store.actions, {}),
 
-          return response
-        })
-        .catch((response) => {
-          console.log('Error Response: ', response)
-
-          return response
-        })
-    },
-    updateForm: function ({state, commit}, {updatedForm, index}) {
-      return axios.put(`http://base_52.local/api/forms/${updatedForm.id}`, updatedForm)
-        .then((response) => {
-          updatedForm = response.data
-          commit('setForm', {updatedForm, index})
-
-          return response
-        })
-        .catch((response) => {
-          console.log('Error Response: ', response)
-
-          return response
-        })
-    }
-  },
   strict: process.env.NODE_ENV !== 'production'
 }
 

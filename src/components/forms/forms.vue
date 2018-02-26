@@ -1,8 +1,8 @@
 <template>
   <div class="hello">
     <h1>Top 4 Forms</h1>
-    <div v-if="forms.length">
-      <div v-for="(form, index) in forms" :key="form.id">
+    <div v-if="topForms.length">
+      <div v-for="(form, index) in topForms" :key="form.id">
         <top-form :form="form" :index="index"></top-form>
       </div>
     </div>
@@ -26,13 +26,14 @@ export default {
   },
   computed: {
     forms: function () {
-      return this.$store.state.forms.paginatedForms.data.slice(0, 4)
+      return this.$store.getters['forms/collection']
+    },
+    topForms () {
+      return this.forms.slice(0, 4)
     }
   },
   mounted: function () {
-    this.$store.dispatch('getForms')
-  },
-  methods: {
+    this.$store.dispatch('forms/getCollection')
   }
 }
 </script>

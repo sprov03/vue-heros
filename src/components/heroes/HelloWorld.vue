@@ -1,8 +1,8 @@
 <template>
   <div class="hello">
     <h1>Top 4 Heroes</h1>
-    <div v-if="heroes.length">
-      <div v-for="(hero, index) in heroes" :key="hero.id">
+    <div v-if="topHeroes.length">
+      <div v-for="(hero, index) in topHeroes" :key="hero.id">
         <top-heroes :hero="hero" :index="index"></top-heroes>
       </div>
     </div>
@@ -26,14 +26,14 @@ export default {
   },
   computed: {
     heroes: function () {
-      return this.$store.state.heroes.collection.slice(0, 4)
+      return this.$store.getters['heroes/collection']
+    },
+    topHeroes () {
+      return this.heroes.slice(0, 4)
     }
   },
   mounted: function () {
-    Promise.all([
-      this.$store.dispatch('heroes/getCollection'),
-      this.$store.dispatch('todos/getCollection')
-    ])
+    this.$store.dispatch('heroes/getCollection')
   },
   methods: {
   }

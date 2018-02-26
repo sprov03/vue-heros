@@ -1,12 +1,13 @@
 import axios from 'axios'
-import _ from 'lodash'
 import mainStore from '../../index'
 import Vue from 'vue'
 let clone = require('lodash/cloneDeep')
 
-const store = {
+let store = {
   state: {
-    url: 'overwrite-me example: /api/heroes',
+    url: 'overwrite-me example: /api/todos',
+    query: {},
+    pagination: {},
     collection: [],
     defaultInstance: {},
     collectionLoaded: false,
@@ -15,14 +16,21 @@ const store = {
   actions: {
     getCollection: function ({state, commit, dispatch}) {
       if (state.collectionLoaded) {
-        return Promise.resolve({data: state.collection})
+        let response = {
+          data: {
+            data: state.collection
+          }
+        }
+
+        return Promise.resolve(clone(response))
       }
 
       return axios.get(`${mainStore.state.baseUrl}/${state.url}`)
         .then((response) => {
+          commit(`setPagination`, response.data)
           commit(`setCollection`, response.data.data)
 
-          return response
+          return clone(response)
         })
         .catch((response) => {
           console.log('Error Response: ', response)
@@ -30,24 +38,21 @@ const store = {
           throw response
         })
     },
-    resolvePending: async function ({state, dispatch}, id) {
+    resolvePending: async function ({state, dispatch, getters}, id) {
       let wait = ms => new Promise((resolve, reject) => setTimeout(resolve, ms))
 
       if (state.pending.includes(parseInt(id))) {
-        console.log('includes', id)
         return wait(100)
           .then(() => dispatch('resolvePending', id))
       }
 
-      return state.collection.find((instance) => {
-        return instance.id === parseInt(id)
-      })
+      return getters.instance(id)
     },
     getInstance: async function ({state, commit, dispatch}, id) {
       let instance = await dispatch('resolvePending', id)
 
       if (instance) {
-        return Promise.resolve({data: _.clone(instance)})
+        return Promise.resolve({data: clone(instance)})
       }
 
       return axios.get(`${mainStore.state.baseUrl}/${state.url}/${id}`)
@@ -98,14 +103,14 @@ const store = {
         return dispatch('createInstance', instance)
       }
     },
-    updateInstance: function ({state, commit}, {updatedInstance, index}) {
+    updateInstance: function ({state, commit, getters}, {updatedInstance, index}) {
       commit('pushPending', updatedInstance.id)
       return axios.put(`${mainStore.state.baseUrl}/${state.url}/${updatedInstance.id}`, updatedInstance)
         .then((response) => {
           let instance = response.data
 
           if (!index) {
-            index = state.collection.findIndex((instance) => instance.id === response.data.id)
+            index = getters.index(response.data.id)
           }
 
           commit('updateCollection', {instance, index})
@@ -125,6 +130,9 @@ const store = {
     setCollection (state, collection) {
       state.collection = collection
       state.collectionLoaded = true
+    },
+    setPagination (state, pagination) {
+      state.pagination = pagination
     },
     pushCollection (state, instance) {
       let index = state.collection.length
@@ -160,6 +168,12 @@ const store = {
     },
     collectionLoaded (state) {
       return state.collectionLoaded
+    },
+    instance: (state) => (id) => {
+      return state.collection.find((instance) => instance.id === parseInt(id))
+    },
+    index: (state) => (id) => {
+      return state.collection.findIndex((instance) => instance.id === parseInt(id))
     },
     defaultInstance (state) {
       return state.defaultInstance

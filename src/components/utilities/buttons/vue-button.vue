@@ -47,7 +47,7 @@ export default {
     labels: {
       type: Object
     },
-    errors: {
+    formErrors: {
       type: Object
     },
     disabled: {
@@ -76,7 +76,7 @@ export default {
       return this.classSet[this.action][this.status]
     },
     isDisabled () {
-      return (this.disabled || !this.status === 'ready')
+      return (this.disabled || this.status === 'pending' || this.status === 'error')
     },
     isLoading () {
       return this.status === 'pending'

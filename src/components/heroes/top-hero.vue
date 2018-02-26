@@ -2,21 +2,30 @@
   <div v-if="index <= 3" class="col-sm-3">
     <div class="alert alert-info">
       <h3>{{ hero.name }}</h3>
-      <input class="form-control" type="text" v-model="localHero.name">
-      <button class="btn btn-primary" @click="updateHero">Update<span v-if="updating">ing...</span></button>
+
+      <basic-input-field
+        v-model="localHero.name"
+        :form-errors.sync="formErrors.name"
+        :out-dated="outDated.name">
+      </basic-input-field>
+
+      <router-link class="btn btn-warning" :to="{path: `/heroes/${localHero.id}/edit`}">Edit</router-link>
+
+      <vue-button class="pull-right" :on-click="saveHero" action="save" :form-errors="formErrors"></vue-button>
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import formUtilities from '../utilities/forms/mixin'
 
 export default {
   name: 'top-hero',
+  mixins: [formUtilities],
   data () {
     return {
-      localHero: null,
-      updating: false
+      localHero: {}
     }
   },
   props: ['hero', 'index'],
@@ -24,15 +33,11 @@ export default {
     this.localHero = _.clone(this.hero)
   },
   methods: {
-    updateHero () {
-      const index = this.index
-      const updatedInstance = _.clone(this.localHero)
-      this.updating = true
-
-      this.$store.dispatch('heroes/updateInstance', {updatedInstance, index})
-        .then(() => {
-          this.updating = false
-        })
+    saveHero () {
+      return this.$store.dispatch('heroes/saveInstance', this.handleOutDated(this.localHero))
+        .then((response) => {
+          this.localTodo = response.data
+        }, this.handleFormErrors)
     }
   }
 }

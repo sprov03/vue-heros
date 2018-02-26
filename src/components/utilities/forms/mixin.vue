@@ -25,9 +25,8 @@ export default {
       throw error
     },
     handleOutDated (instance) {
-      instance = _.clone(instance)
-
       if (this.outDated.updated_at) {
+        instance = _.clone(instance)
         instance.updated_at = this.outDated.updated_at
         this.outDated = Object.assign({}, {})
       }
