@@ -5,8 +5,7 @@
       label="Label"
       :form-errors.sync="formErrors.label"
       :out-dated="outDated.label"
-      :disabled="!localTodo"
-      :cleaveOptions="{numeral: true, prefix: '$', numeralDecimalScale: 2}">
+      :disabled="!localTodo">
     </basic-input-field>
 
     <basic-input-field
